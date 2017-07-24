@@ -3,6 +3,8 @@ package com.leewaiho.Bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -11,12 +13,18 @@ import java.util.Collection;
  * Created by leewaiho on 2017/7/20.
  */
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class User extends BaseBean {
     
     private String username;
     
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    
+    @CreatedBy
+    @ManyToOne
+    @JoinColumn(name = "created_by", referencedColumnName = "username")
+    private User createdBy;
     
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -54,4 +62,12 @@ public class User extends BaseBean {
         this.roles = roles;
     }
     
+    public User getCreatedBy() {
+        return createdBy;
+    }
+    
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
 }
